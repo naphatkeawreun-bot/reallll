@@ -65,6 +65,9 @@ body.demo{padding-top:calc(env(safe-area-inset-top) + 24px)}
 .tg.real{background:var(--blue);color:#fff}.tg.demo{background:var(--amber);color:#1a1000}
 .card.cur{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
 #asheet .seg button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.plw{display:flex;gap:8px;margin-top:6px}.plw input{margin-top:0!important;flex:1;min-width:0}
+.sgn{flex:none;width:54px;border-radius:12px;border:1px solid var(--line);background:var(--navy);color:var(--sky);font:inherit;font-size:26px;font-weight:700;line-height:1}
+.sgn.neg{background:#3a1822;border-color:#ff6b7a66;color:var(--loss)}
 .empty{color:var(--mute);text-align:center;padding:48px 20px}
 .tools{display:flex;gap:16px;justify-content:center;margin-top:18px}
 .tools button,.tools label{background:none;border:0;color:var(--mute);font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:3px}
@@ -74,7 +77,7 @@ body.demo{padding-top:calc(env(safe-area-inset-top) + 24px)}
 .bar{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
 .bar b{font-size:18px}
 .bar button{background:none;border:0;color:var(--sky);font:inherit;font-size:16px;padding:4px}
-label.f{display:block;margin:0 0 14px;color:var(--mute);font-size:13px}
+label.f,div.f{display:block;margin:0 0 14px;color:var(--mute);font-size:13px}
 .f input,.f textarea{display:block;width:100%;margin-top:6px;padding:12px;background:var(--navy);border:1px solid var(--line);border-radius:12px;color:var(--ink);font:inherit;font-size:16px;outline:0}
 .f input:focus,.f textarea:focus{border-color:var(--blue)}
 textarea{min-height:96px;resize:vertical}
@@ -115,7 +118,7 @@ input[type=date]::-webkit-date-and-time-value{text-align:left}
 <label class="f">Take Profit (ราคา)<input id="f-tp" type="number" step="any" inputmode="decimal"></label></div>
 <div class="rc" id="rc"></div><p class="hn" id="hn"></p>
 <div class="row"><label class="f">ล็อต<input id="f-lot" type="number" step="any" inputmode="decimal" value="0.01"></label>
-<label class="f">กำไร / ขาดทุน (USD)<input id="f-pl" type="number" step="any" inputmode="decimal"></label></div>
+<div class="f"><span>กำไร / ขาดทุน (USD)</span><div class="plw"><button type="button" class="sgn" id="sgn" aria-label="สลับกำไร/ขาดทุน">+</button><input id="f-pl" type="number" step="any" inputmode="decimal"></div></div></div>
 <p class="hn" id="plh" style="margin-top:-6px"></p>
 <label class="f">เหตุผลในการเข้าเทรด<textarea id="f-reason"></textarea></label>
 <label class="f">รูปกราฟ<input id="f-img" type="file" accept="image/*"></label>
@@ -191,7 +194,7 @@ function openSheet(t){
  $('#ttl').textContent=t?'แก้ไขเทรด':'เทรดใหม่';$('#del').style.display=t?'block':'none';
  f.date.value=t?t.date:(view==='cal'?sel:new Date().toLocaleDateString('sv'));
  f.pair.value=t?t.pair:'XAUUSD';f.lot.value=t?t.lot:'0.01';
- f.entry.value=t?t.entry:'';f.exit.value=t?t.exit:'';f.sl.value=t&&t.sl?t.sl:'';f.tp.value=t&&t.tp?t.tp:'';f.pl.value=t?t.pl:'';f.pl.dataset.m=t?'1':'';
+ f.entry.value=t?t.entry:'';f.exit.value=t?t.exit:'';f.sl.value=t&&t.sl?t.sl:'';f.tp.value=t&&t.tp?t.tp:'';setPL(t?t.pl:null);if(!t)plNeg=false;paintS();f.pl.dataset.m=t?'1':'';$('#sgn').dataset.m=t?'1':'';
  f.reason.value=t?t.reason:'';f.img.value='';setSide(t?t.side:'Buy');prev();
  $('#sheet').classList.add('on');$('#sheet').setAttribute('aria-hidden','false');
 }
@@ -214,13 +217,20 @@ function plAuto(p,dist,lot,px){p=p.toUpperCase().replace(/[^A-Z]/g,'');if(!(lot>
  if(p.endsWith('USD'))return dist*lot*100000;
  if(p.startsWith('USD')&&px>0)return dist*lot*100000/px;
  return null}
-function calc(){const e=+f.entry.value,x=+f.exit.value,l=+f.lot.value,d=side==='Buy'?1:-1,has=f.entry.value!==''&&f.exit.value!=='';let h='';
- if(f.pl.dataset.m!=='1'){const v=has?plAuto(f.pair.value,(x-e)*d,l,x):null;
-  if(v!=null){f.pl.value=v.toFixed(2);h='คำนวณอัตโนมัติ (แก้เองได้)'}
-  else{f.pl.value='';if(has)h='คู่นี้ไม่มีสูตรอัตโนมัติ กรอกกำไร/ขาดทุนเอง'}}
+let plNeg=false;
+function paintS(){const b=$('#sgn');b.textContent=plNeg?'−':'+';b.classList.toggle('neg',plNeg)}
+function getPL(){return f.pl.value===''?null:(plNeg?-1:1)*Math.abs(+f.pl.value)}
+function setPL(v){f.pl.value=v==null?'':Math.abs(v).toFixed(2);if(v!=null&&v!==0)plNeg=v<0;paintS()}
+function calc(){const e=+f.entry.value,x=+f.exit.value,l=+f.lot.value,d=side==='Buy'?1:-1,has=f.entry.value!==''&&f.exit.value!=='',ds=has?(x-e)*d:0;let h='';
+ if(has&&ds!==0&&$('#sgn').dataset.m!=='1'){plNeg=ds<0;paintS()}
+ if(f.pl.dataset.m!=='1'){const v=has?plAuto(f.pair.value,ds,l,x):null;
+  if(v!=null){setPL(v);h='คำนวณอัตโนมัติ (แก้เองได้)'}
+  else{f.pl.value='';if(has)h='คู่นี้ไม่มีสูตรอัตโนมัติ กรอกจำนวนเงินเอง (เครื่องหมาย +/− ตามราคาให้เอง กดปุ่มสลับได้)'}}
+ if(f.pl.value!==''&&ds!==0&&plNeg!==(ds<0))h='⚠ ราคาไปทาง'+(ds<0?'ขาดทุน':'กำไร')+' แต่ตั้งเป็น'+(plNeg?'ขาดทุน':'กำไร');
  $('#plh').textContent=h;updateRR()}
 ['entry','exit','lot','sl','tp','pair'].forEach(k=>f[k].oninput=calc);
-f.pl.oninput=()=>{f.pl.dataset.m=f.pl.value===''?'':'1';calc()};
+f.pl.oninput=()=>{f.pl.dataset.m=f.pl.value===''?'':'1';if(f.pl.value==='')$('#sgn').dataset.m='';calc()};
+$('#sgn').onclick=()=>{plNeg=!plNeg;$('#sgn').dataset.m='1';if(f.pl.value!=='')f.pl.dataset.m='1';paintS();calc()};
 document.querySelectorAll('#sheet .seg button').forEach(b=>b.onclick=()=>setSide(b.dataset.s));
 f.img.onchange=()=>{const fl=f.img.files[0];if(!fl)return;const im=new Image();
  im.onload=()=>{const s=Math.min(1,1000/Math.max(im.width,im.height)),c=document.createElement('canvas');
@@ -230,7 +240,7 @@ $('#pv').onclick=()=>{$('#viewer img').src=img;$('#viewer').style.display='flex'
 $('#viewer').onclick=()=>$('#viewer').style.display='none';
 $('#save').onclick=()=>{
  if(f.entry.value===''||f.exit.value===''||f.pl.value===''){alert('กรอกราคาเข้า ราคาออก และกำไร / ขาดทุนให้ครบ');return}
- const t={id:cur?cur.id:Date.now(),date:f.date.value,pair:f.pair.value.trim()||'XAUUSD',side,lot:+f.lot.value||0,entry:+f.entry.value,exit:+f.exit.value,pl:+f.pl.value,acc:cur?(cur.acc||'a1'):ca,sl:+f.sl.value||0,tp:+f.tp.value||0,rr:R_().plan,rrr:R_().real,reason:f.reason.value.trim(),img};
+ const t={id:cur?cur.id:Date.now(),date:f.date.value,pair:f.pair.value.trim()||'XAUUSD',side,lot:+f.lot.value||0,entry:+f.entry.value,exit:+f.exit.value,pl:getPL()||0,acc:cur?(cur.acc||'a1'):ca,sl:+f.sl.value||0,tp:+f.tp.value||0,rr:R_().plan,rrr:R_().real,reason:f.reason.value.trim(),img};
  const r=st('readwrite');r.put(t);r.transaction.oncomplete=()=>{closeSheet();load()};
 };
 $('#del').onclick=()=>{if(!confirm('ลบเทรดนี้?'))return;const r=st('readwrite');r.delete(cur.id);r.transaction.oncomplete=()=>{closeSheet();load()}};
