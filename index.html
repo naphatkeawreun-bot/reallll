@@ -1,0 +1,266 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PhatJournal"><meta name="theme-color" content="#050912">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-180.png">
+<title>PhatJournal</title>
+<style>
+:root{--bg:#050912;--navy:#0b1630;--navy2:#12214a;--line:#1c2f63;--blue:#2f6bff;--sky:#7fb0ff;--ink:#e9f0ff;--mute:#7f93bd;--loss:#ff6b7a;--buy:#2ecc8f;--sell:#ff5c66;--amber:#ffb020;--w:#fff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,"SF Pro Text","Sukhumvit Set",system-ui,sans-serif}
+body{padding:env(safe-area-inset-top) 16px calc(96px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto}
+header{padding:18px 0 14px}
+.th{display:flex;justify-content:space-between;align-items:center;margin:0 0 14px}
+h1{margin:0;font-size:20px;font-weight:700;letter-spacing:.2px}
+h1 span{color:var(--sky)}
+.stats{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:10px}
+.stat{background:linear-gradient(160deg,var(--navy2),var(--navy));border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.stat small{display:block;color:var(--mute);font-size:12px}
+.stat b{font-size:20px;font-variant-numeric:tabular-nums}
+.stat:first-child b{font-size:24px}
+.pos{color:var(--sky)}.neg{color:var(--loss)}
+.card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin:0 0 10px;padding:12px 14px;background:var(--navy);border:1px solid var(--line);border-radius:14px;color:inherit;font:inherit}
+.card:active{background:var(--navy2)}
+.side{flex:none;width:58px;display:flex;align-items:center;justify-content:center;gap:5px;padding:6px 0;border-radius:8px;font-size:13px;font-weight:700}
+.side.Buy{background:var(--buy);color:#04170e}
+.card.Buy{border-left:4px solid var(--buy)}
+.card.Sell{border-left:4px solid var(--sell)}
+.side.Sell{background:var(--sell);color:#1f0508}
+.mid{flex:1;min-width:0}.mid b{display:block}.mid small{color:var(--mute);font-size:13px}
+.pl{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:0 0 14px}
+.tabs button{padding:9px 0;border-radius:10px;border:1px solid var(--line);background:var(--navy);color:var(--mute);font:inherit;font-size:13px}
+.tabs button.on{background:var(--blue);border-color:var(--blue);color:var(--w)}
+.cnt{flex:none;width:52px;text-align:center;border:1px solid var(--line);border-radius:8px;padding:4px 0;font-size:11px;color:var(--mute);line-height:1.15}
+.cnt b{display:block;font-size:17px;color:var(--ink)}
+.mbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.mbar b{font-size:18px}
+.mbar button{background:none;border:0;color:var(--sky);font:inherit;font-size:26px;line-height:1;padding:0 10px}
+.ms{display:flex;justify-content:space-between;align-items:center;color:var(--mute);font-size:13px;margin:0 0 10px}.ms b{font-size:16px}
+.wd{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px;text-align:center;color:var(--mute);font-size:11px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px}
+.d{height:54px;border-radius:10px;background:var(--navy);border:1px solid #14244f;padding:4px 5px;display:flex;flex-direction:column;justify-content:space-between;font:inherit;font-size:11px;color:var(--ink);text-align:left}
+.d.o{background:none;border-color:transparent}
+.d .h{display:flex;justify-content:space-between;align-items:center}.d i{font-style:normal}
+.d u{min-width:14px;height:14px;border-radius:7px;background:var(--blue);color:#fff;font-size:9px;text-align:center;line-height:14px;text-decoration:none}
+.d b{font-size:12px}
+.d.w{background:#102a63;border-color:#2f6bff77}.d.w b{color:var(--sky)}
+.d.l{background:#3a1822;border-color:#ff6b7a66}.d.l b{color:#ff8c98}
+.d.t{box-shadow:0 0 0 2px var(--sky)}.d.s{border-color:var(--w)}
+.rr2{display:block;color:var(--sky);font-size:12px;margin-top:2px}
+.rr.neg{color:var(--loss)}
+.rr{display:block;font-size:12px;font-weight:600;color:var(--mute)}
+.ac{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:16px;border:1px solid var(--blue);background:#102a63;color:var(--ink);font:inherit;font-size:13px;font-weight:600;max-width:60%}
+.ac span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ac i{flex:none;width:8px;height:8px;border-radius:4px;background:var(--blue)}.ac small{color:var(--sky);font-size:11px}
+.ac.dm{border-color:var(--amber);background:#3a2a08}.ac.dm i{background:var(--amber)}.ac.dm small{color:var(--amber)}
+#ds{display:none}body.demo #ds{display:block;position:fixed;top:env(safe-area-inset-top);left:0;right:0;height:20px;background:var(--amber);color:#1a1000;font-size:11px;font-weight:700;text-align:center;line-height:20px;z-index:4}
+body.demo{padding-top:calc(env(safe-area-inset-top) + 24px)}
+.arow{display:flex;gap:8px;margin-bottom:10px}.arow .card{margin:0;flex:1;min-width:0}
+.rm{flex:none;background:none;border:1px solid #4a2230;color:var(--loss);border-radius:14px;padding:0 14px;font:inherit;font-size:14px}
+.rc{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.rc div{background:linear-gradient(160deg,var(--navy2),var(--navy));border:1px solid var(--line);border-radius:14px;padding:8px 12px}
+.rc small{display:block;color:var(--mute);font-size:12px}.rc b{font-size:22px;color:var(--sky)}.rc b.neg{color:var(--loss)}
+.hn{margin:0 0 14px;color:var(--mute);font-size:12px}
+.tg{flex:none;width:52px;text-align:center;padding:6px 0;border-radius:8px;font-size:12px;font-weight:700}
+.tg.real{background:var(--blue);color:#fff}.tg.demo{background:var(--amber);color:#1a1000}
+.card.cur{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+#asheet .seg button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.empty{color:var(--mute);text-align:center;padding:48px 20px}
+.tools{display:flex;gap:16px;justify-content:center;margin-top:18px}
+.tools button,.tools label{background:none;border:0;color:var(--mute);font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:3px}
+#add{position:fixed;right:20px;bottom:calc(22px + env(safe-area-inset-bottom));width:60px;height:60px;border-radius:30px;border:0;background:var(--blue);color:var(--w);font-size:32px;box-shadow:0 8px 24px #2f6bff66}
+#sheet,#asheet{position:fixed;inset:0;background:var(--bg);overflow:auto;padding:env(safe-area-inset-top) 16px calc(40px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .28s ease;z-index:5}
+#sheet.on,#asheet.on{transform:none}
+.bar{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
+.bar b{font-size:18px}
+.bar button{background:none;border:0;color:var(--sky);font:inherit;font-size:16px;padding:4px}
+label.f{display:block;margin:0 0 14px;color:var(--mute);font-size:13px}
+.f input,.f textarea{display:block;width:100%;margin-top:6px;padding:12px;background:var(--navy);border:1px solid var(--line);border-radius:12px;color:var(--ink);font:inherit;font-size:16px;outline:0}
+.f input:focus,.f textarea:focus{border-color:var(--blue)}
+textarea{min-height:96px;resize:vertical}
+.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.f input{min-width:0}
+.f input[type=date]{-webkit-appearance:none;appearance:none;height:48px;text-align:left}
+input[type=date]::-webkit-date-and-time-value{text-align:left}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.seg button{display:flex;align-items:center;justify-content:center;gap:7px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--navy);color:var(--mute);font:inherit;font-weight:700}
+.seg button svg{color:var(--buy)}.seg button[data-s=Sell] svg{color:var(--sell)}
+.seg button.on svg{color:inherit}
+.seg button.on[data-s=Sell]{background:var(--sell);border-color:var(--sell);color:#1f0508}
+.seg button.on{background:var(--buy);border-color:var(--buy);color:#04170e}
+#pv{max-width:100%;border-radius:12px;margin-top:8px;display:none;border:1px solid var(--line)}
+.save{width:100%;padding:15px;border:0;border-radius:14px;background:var(--blue);color:var(--w);font:inherit;font-weight:700;font-size:17px;margin-top:6px}
+.del{width:100%;padding:12px;margin-top:14px;background:none;border:0;color:var(--loss);font:inherit;display:none}
+#viewer{position:fixed;inset:0;background:#000e;display:none;z-index:9;align-items:center;justify-content:center}
+#viewer img{max-width:100%;max-height:100%}
+:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){#sheet,#asheet{transition:none}}
+</style></head><body><div id="ds">DEMO  บัญชีซ้อมมือ</div>
+<header><div class="th"><h1>Phat<span>Journal</span></h1><button class="ac" id="acc" aria-label="เปลี่ยนบัญชี"><i></i><span id="accn">บัญชีหลัก</span><small>▾</small></button></div>
+<div class="stats"><div class="stat"><small>กำไรสุทธิ (USD)</small><b id="sum">$0.00</b></div>
+<div class="stat"><small>Win rate</small><b id="wr">–</b></div>
+<div class="stat"><small>เทรด</small><b id="n">0</b></div></div></header>
+<nav class="tabs" id="tabs"><button data-v="all" class="on">รายการ</button><button data-v="cal">ปฏิทิน</button><button data-v="day">วัน</button><button data-v="week">สัปดาห์</button><button data-v="month">เดือน</button></nav>
+<main id="list"></main>
+<div class="tools"><button id="exp">สำรองข้อมูล</button><label>นำเข้า<input id="imp" type="file" accept=".json" hidden></label></div>
+<button id="add" aria-label="เพิ่มเทรด">+</button>
+
+<section id="sheet" aria-hidden="true">
+<div class="bar"><button id="close">ปิด</button><b id="ttl">เทรดใหม่</b><span style="width:40px"></span></div>
+<div class="row"><label class="f">วันที่<input id="f-date" type="date"></label><label class="f">คู่เงิน<input id="f-pair" value="XAUUSD"></label></div>
+<div class="seg"><button data-s="Buy" class="on"><svg viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M6 1.5 11 9H1z" fill="currentColor"/></svg>Buy</button><button data-s="Sell"><svg viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M6 10.5 1 3h10z" fill="currentColor"/></svg>Sell</button></div>
+<div class="row"><label class="f">ราคาเข้า<input id="f-entry" type="number" step="any" inputmode="decimal"></label>
+<label class="f">ราคาออก<input id="f-exit" type="number" step="any" inputmode="decimal"></label></div>
+<div class="row"><label class="f">Stop Loss (ราคา)<input id="f-sl" type="number" step="any" inputmode="decimal"></label>
+<label class="f">Take Profit (ราคา)<input id="f-tp" type="number" step="any" inputmode="decimal"></label></div>
+<div class="rc" id="rc"></div><p class="hn" id="hn"></p>
+<div class="row"><label class="f">ล็อต<input id="f-lot" type="number" step="any" inputmode="decimal" value="0.01"></label>
+<label class="f">กำไร / ขาดทุน (USD)<input id="f-pl" type="number" step="any" inputmode="decimal"></label></div>
+<p class="hn" id="plh" style="margin-top:-6px"></p>
+<label class="f">เหตุผลในการเข้าเทรด<textarea id="f-reason"></textarea></label>
+<label class="f">รูปกราฟ<input id="f-img" type="file" accept="image/*"></label>
+<img id="pv" alt="รูปกราฟ">
+<button class="save" id="save">บันทึกเทรด</button><button class="del" id="del">ลบเทรดนี้</button>
+</section>
+<section id="asheet" aria-hidden="true">
+<div class="bar"><button id="aclose">ปิด</button><b>บัญชี</b><span style="width:40px"></span></div>
+<p class="hn">ข้อมูลเทรดแยกตามบัญชี แตะเพื่อเลือกบัญชีที่ใช้อยู่</p>
+<div id="alist"></div>
+<label class="f" style="margin-top:18px">ชื่อบัญชีใหม่<input id="an" placeholder="เช่น บัญชีทดลอง 2"></label>
+<div class="seg"><button data-t="real" class="on">Real</button><button data-t="demo">Demo</button></div>
+<button class="save" id="aadd">+ เพิ่มบัญชี</button>
+</section>
+<div id="viewer"><img alt=""></div>
+
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const m=n=>(n<0?'−':'+')+'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const f={};['date','pair','lot','entry','exit','sl','tp','pl','reason','img'].forEach(k=>f[k]=$('#f-'+k));
+let db,trades=[],cur=null,img='',side='Buy';
+const LS=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},SV=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let accs=LS('pj_acc',[{id:'a1',name:'บัญชีหลัก',type:'real'},{id:'a2',name:'ซ้อมมือ',type:'demo'}]),ca=LS('pj_cur','a1'),pip=0.1,allT=[];
+if(!accs.find(a=>a.id===ca))ca=accs[0].id;
+const rq=indexedDB.open('gj',1);
+rq.onupgradeneeded=()=>rq.result.createObjectStore('trades',{keyPath:'id'});
+rq.onsuccess=()=>{db=rq.result;load()};
+const st=(mode='readonly')=>db.transaction('trades',mode).objectStore('trades');
+function load(){st().getAll().onsuccess=e=>{allT=e.target.result;trades=allT.filter(t=>(t.acc||'a1')===ca).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);render()}}
+let view='all',cmon=new Date().toLocaleDateString('sv').slice(0,7),sel=new Date().toLocaleDateString('sv');
+const TF=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const r2=n=>Math.round(n*100)/100,fm=n=>n.toLocaleString('en-US',{maximumFractionDigits:2});
+function calHTML(){
+ const[y,mo]=cmon.split('-').map(Number),off=(new Date(y,mo-1,1).getDay()+6)%7,dim=new Date(y,mo,0).getDate(),td=iso(new Date()),by={};
+ trades.forEach(t=>{const o=by[t.date]=by[t.date]||{n:0,pl:0};o.n++;o.pl=r2(o.pl+t.pl)});
+ const mt=trades.filter(t=>t.date.slice(0,7)===cmon),mp=r2(mt.reduce((a,t)=>a+t.pl,0)),mw=mt.filter(t=>t.pl>0).length;
+ let c='<div class="d o"></div>'.repeat(off);
+ for(let d=1;d<=dim;d++){const k=cmon+'-'+String(d).padStart(2,'0'),o=by[k];
+  c+=`<button class="d${o?(o.pl<0?' l':' w'):''}${k===td?' t':''}${k===sel?' s':''}" data-d="${k}"><span class="h"><i>${d}</i>${o?`<u>${o.n}</u>`:''}</span>${o?`<b>${o.pl<0?'−':'+'}${fm(Math.abs(o.pl))}</b>`:''}</button>`}
+ const day=trades.filter(t=>t.date===sel),dp=r2(day.reduce((a,t)=>a+t.pl,0));
+ return `<div class="mbar"><button data-mv="-1" aria-label="เดือนก่อน">‹</button><b>${TF[mo-1]} ${y}</b><button data-mv="1" aria-label="เดือนถัดไป">›</button></div>
+<div class="ms"><span>${mt.length} order  ชนะ ${mw}  แพ้ ${mt.length-mw}</span><b class="${mp<0?'neg':'pos'}">${m(mp)}</b></div>
+<div class="wd">${['จ.','อ.','พ.','พฤ.','ศ.','ส.','อา.'].map(x=>`<span>${x}</span>`).join('')}</div><div class="cal">${c}</div>
+<div class="ms"><span>${label(sel,'day')}  ${day.length} order  (ตัวเลขในวงกลม = จำนวน order)</span>${day.length?`<b class="${dp<0?'neg':'pos'}">${m(dp)}</b>`:''}</div>${day.length?day.map(card).join(''):'<p class="empty" style="padding:16px">ไม่มีเทรดในวันนี้</p>'}`}
+const TM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const iso=d=>d.toLocaleDateString('sv');
+function key(d,v){if(v==='day')return d;if(v==='month')return d.slice(0,7);
+ const x=new Date(d+'T00:00:00');x.setDate(x.getDate()-(x.getDay()+6)%7);return iso(x)}
+function label(k,v){
+ if(v==='day'){const[y,mo,da]=k.split('-');return +da+' '+TM[mo-1]+' '+y}
+ if(v==='month'){const[y,mo]=k.split('-');return TM[mo-1]+' '+y}
+ const a=new Date(k+'T00:00:00'),b=new Date(a);b.setDate(b.getDate()+6);
+ return a.getDate()+' '+TM[a.getMonth()]+' – '+b.getDate()+' '+TM[b.getMonth()]+' '+b.getFullYear()}
+function groups(v){const g={};
+ trades.forEach(t=>{const k=key(t.date,v),o=g[k]=g[k]||{n:0,pl:0,w:0};o.n++;o.pl=Math.round((o.pl+t.pl)*100)/100;if(t.pl>0)o.w++});
+ return Object.keys(g).sort().reverse().map(k=>({k,...g[k]}))}
+const ic=s=>'<svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="'+(s==='Buy'?'M6 1.5 11 9H1z':'M6 10.5 1 3h10z')+'" fill="currentColor"/></svg>';
+const card=t=>`<button class="card ${t.side}" data-id="${t.id}"><span class="side ${t.side}">${ic(t.side)}${t.side}</span><span class="mid"><b>${esc(t.pair)}</b><small>${esc(t.date)}  ${t.entry} → ${t.exit}</small></span><span class="pl ${t.pl<0?'neg':'pos'}">${m(t.pl)}${rrTag(t)}</span></button>`;
+const grow=g=>`<div class="card"><span class="cnt"><b>${g.n}</b>order</span><span class="mid"><b>${label(g.k,view)}</b><small>ชนะ ${g.w}  แพ้ ${g.n-g.w}</small></span><span class="pl ${g.pl<0?'neg':'pos'}">${m(g.pl)}</span></div>`;
+$('#tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;view=b.dataset.v;
+ document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));render()};
+function render(){
+ const A=accs.find(a=>a.id===ca)||accs[0];$('#accn').textContent=A.name;$('#acc').className='ac'+(A.type==='demo'?' dm':'');document.body.classList.toggle('demo',A.type==='demo');if($('#asheet').classList.contains('on'))$('#alist').innerHTML=accHTML();
+ const n=trades.length,sum=trades.reduce((a,t)=>a+t.pl,0),w=trades.filter(t=>t.pl>0).length;
+ $('#sum').textContent=m(sum);$('#sum').className=sum<0?'neg':'pos';
+ $('#wr').textContent=n?Math.round(w/n*100)+'%':'–';$('#n').textContent=n;
+ $('#list').innerHTML=view==='cal'?calHTML():n?(view==='all'?trades.map(card).join(''):groups(view).map(grow).join('')):'<p class="empty">ยังไม่มีรายการ กด + เพื่อบันทึกเทรดแรก</p>';
+}
+function setSide(s){side=s;document.querySelectorAll('#sheet .seg button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));calc()}
+function prev(){const p=$('#pv');p.src=img;p.style.display=img?'block':'none'}
+function openSheet(t){
+ cur=t||null;img=t?t.img||'':'';
+ $('#ttl').textContent=t?'แก้ไขเทรด':'เทรดใหม่';$('#del').style.display=t?'block':'none';
+ f.date.value=t?t.date:(view==='cal'?sel:new Date().toLocaleDateString('sv'));
+ f.pair.value=t?t.pair:'XAUUSD';f.lot.value=t?t.lot:'0.01';
+ f.entry.value=t?t.entry:'';f.exit.value=t?t.exit:'';f.sl.value=t&&t.sl?t.sl:'';f.tp.value=t&&t.tp?t.tp:'';f.pl.value=t?t.pl:'';f.pl.dataset.m=t?'1':'';
+ f.reason.value=t?t.reason:'';f.img.value='';setSide(t?t.side:'Buy');prev();
+ $('#sheet').classList.add('on');$('#sheet').setAttribute('aria-hidden','false');
+}
+const closeSheet=()=>{$('#sheet').classList.remove('on');$('#sheet').setAttribute('aria-hidden','true')};
+const rfn=n=>(n<0?'−':'')+(Math.abs(n)<1?Math.abs(n).toFixed(2):Math.abs(n).toFixed(1)),rf=n=>'1 : '+rfn(n),pp=t=>t.pips!=null?t.pips:r2(t.rr*t.sl);
+const r5=n=>+n.toFixed(5);
+function rrBoth(t){const d=t.side==='Buy'?1:-1,k=t.sl>0?(t.entry-t.sl)*d:0;if(!(k>0))return{};const w=(t.tp-t.entry)*d;return{p:t.tp>0&&w>0?r2(w/k):null,r:r2((t.exit-t.entry)*d/k)}}
+const rrTag=t=>{const o=rrBoth(t);return(o.p!=null?`<small class="rr">แผน 1:${rfn(o.p)}</small>`:'')+(o.r!=null?`<small class="rr${o.r<0?' neg':''}">จริง 1:${rfn(o.r)}</small>`:'')}
+function R_(){const e=+f.entry.value,sl=+f.sl.value,tp=+f.tp.value,x=+f.exit.value,d=side==='Buy'?1:-1,he=f.entry.value!=='';
+ const k=he&&sl>0?(e-sl)*d:null,w=he&&tp>0?(tp-e)*d:null;
+ return{plan:k>0&&w>0?r2(w/k):null,real:k>0&&f.exit.value!==''?r2((x-e)*d/k):null,k,w,x:(x-e)*d,
+  bad:(k!=null&&k<=0)||(w!=null&&w<=0)}}
+function updateRR(){const o=R_();
+ $('#rc').innerHTML=`<div><small>RR แผน</small><b>${o.plan!=null?rf(o.plan):'–'}</b></div><div><small>RR จริง</small><b class="${o.real<0?'neg':''}">${o.real!=null?rf(o.real):'–'}</b></div>`;
+ $('#hn').textContent=o.bad?'SL/TP อยู่ผิดฝั่ง (Buy: SL ต่ำกว่า TP สูงกว่าราคาเข้า / Sell: กลับกัน)':o.k>0?'เสี่ยง '+r5(o.k)+(o.w>0?'  เป้าหมาย '+r5(o.w):'')+(f.exit.value!==''?'  ออกได้ '+r5(o.x):''):'กรอกราคาเข้า, SL, TP (และราคาออก) เพื่อคำนวณ RR'}
+function plAuto(p,dist,lot,px){p=p.toUpperCase().replace(/[^A-Z]/g,'');if(!(lot>0))return null;
+ if(p==='XAUUSD')return dist*lot*100;if(p==='XAGUSD')return dist*lot*5000;
+ const C=['USD','EUR','GBP','AUD','NZD','CAD','CHF','JPY'];
+ if(p.length!==6||!C.includes(p.slice(0,3))||!C.includes(p.slice(3)))return null;
+ if(p.endsWith('USD'))return dist*lot*100000;
+ if(p.startsWith('USD')&&px>0)return dist*lot*100000/px;
+ return null}
+function calc(){const e=+f.entry.value,x=+f.exit.value,l=+f.lot.value,d=side==='Buy'?1:-1,has=f.entry.value!==''&&f.exit.value!=='';let h='';
+ if(f.pl.dataset.m!=='1'){const v=has?plAuto(f.pair.value,(x-e)*d,l,x):null;
+  if(v!=null){f.pl.value=v.toFixed(2);h='คำนวณอัตโนมัติ (แก้เองได้)'}
+  else{f.pl.value='';if(has)h='คู่นี้ไม่มีสูตรอัตโนมัติ กรอกกำไร/ขาดทุนเอง'}}
+ $('#plh').textContent=h;updateRR()}
+['entry','exit','lot','sl','tp','pair'].forEach(k=>f[k].oninput=calc);
+f.pl.oninput=()=>{f.pl.dataset.m=f.pl.value===''?'':'1';calc()};
+document.querySelectorAll('#sheet .seg button').forEach(b=>b.onclick=()=>setSide(b.dataset.s));
+f.img.onchange=()=>{const fl=f.img.files[0];if(!fl)return;const im=new Image();
+ im.onload=()=>{const s=Math.min(1,1000/Math.max(im.width,im.height)),c=document.createElement('canvas');
+ c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+ img=c.toDataURL('image/jpeg',.72);prev()};im.src=URL.createObjectURL(fl)};
+$('#pv').onclick=()=>{$('#viewer img').src=img;$('#viewer').style.display='flex'};
+$('#viewer').onclick=()=>$('#viewer').style.display='none';
+$('#save').onclick=()=>{
+ if(f.entry.value===''||f.exit.value===''||f.pl.value===''){alert('กรอกราคาเข้า ราคาออก และกำไร / ขาดทุนให้ครบ');return}
+ const t={id:cur?cur.id:Date.now(),date:f.date.value,pair:f.pair.value.trim()||'XAUUSD',side,lot:+f.lot.value||0,entry:+f.entry.value,exit:+f.exit.value,pl:+f.pl.value,acc:cur?(cur.acc||'a1'):ca,sl:+f.sl.value||0,tp:+f.tp.value||0,rr:R_().plan,rrr:R_().real,reason:f.reason.value.trim(),img};
+ const r=st('readwrite');r.put(t);r.transaction.oncomplete=()=>{closeSheet();load()};
+};
+$('#del').onclick=()=>{if(!confirm('ลบเทรดนี้?'))return;const r=st('readwrite');r.delete(cur.id);r.transaction.oncomplete=()=>{closeSheet();load()}};
+$('#list').onclick=e=>{
+ const c=e.target.closest('.card[data-id]');if(c)return openSheet(trades.find(t=>t.id==c.dataset.id));
+ const d=e.target.closest('.d[data-d]');if(d){sel=d.dataset.d;return render()}
+ const b=e.target.closest('[data-mv]');if(b){const[y,mo]=cmon.split('-').map(Number);cmon=iso(new Date(y,mo-1+ +b.dataset.mv,1)).slice(0,7);
+  const tm=iso(new Date()).slice(0,7);sel=cmon===tm?iso(new Date()):cmon+'-01';render()}};
+$('#add').onclick=()=>openSheet();$('#close').onclick=closeSheet;
+$('#exp').onclick=async()=>{
+ const b=new Blob([JSON.stringify({v:2,accounts:accs,pip,trades:allT})],{type:'application/json'}),file=new File([b],'phat-journal.json',{type:'application/json'});
+ if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]})}catch(e){}return}
+ const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=file.name;a.click()};
+$('#imp').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text()),L=Array.isArray(d)?d:d.trades;
+ if(d.accounts){d.accounts.forEach(a=>{if(!accs.find(x=>x.id===a.id))accs.push(a)});SV('pj_acc',accs)}
+ const r=st('readwrite');L.forEach(t=>r.put(t));r.transaction.oncomplete=load}catch(x){alert('ไฟล์ไม่ถูกต้อง')}};
+function accHTML(){return accs.map(a=>{const ts=allT.filter(t=>(t.acc||'a1')===a.id),p=r2(ts.reduce((q,t)=>q+t.pl,0));
+ return `<div class="arow"><button class="card${a.id===ca?' cur':''}" data-a="${a.id}"><span class="tg ${a.type}">${a.type==='real'?'Real':'Demo'}</span><span class="mid"><b>${esc(a.name)}</b><small>${ts.length} order${a.id===ca?'  กำลังใช้งาน':''}</small></span><span class="pl ${p<0?'neg':'pos'}">${m(p)}</span></button>${accs.length>1?`<button class="rm" data-rm="${a.id}" aria-label="ลบบัญชี ${esc(a.name)}">ลบ</button>`:''}</div>`}).join('')}
+function delAcc(id){
+ if(accs.length<2){alert('ต้องมีอย่างน้อย 1 บัญชี');return}
+ const a=accs.find(x=>x.id===id),ts=allT.filter(t=>(t.acc||'a1')===id);
+ if(!confirm('ลบบัญชี "'+a.name+'" และเทรดทั้งหมด '+ts.length+' รายการ? ลบแล้วกู้คืนไม่ได้'))return;
+ const r=st('readwrite');ts.forEach(t=>r.delete(t.id));
+ r.transaction.oncomplete=()=>{accs=accs.filter(x=>x.id!==id);SV('pj_acc',accs);if(ca===id){ca=accs[0].id;SV('pj_cur',ca)}load()}}
+const openA=()=>{$('#alist').innerHTML=accHTML();$('#asheet').classList.add('on');$('#asheet').setAttribute('aria-hidden','false')};
+const closeA=()=>{$('#asheet').classList.remove('on');$('#asheet').setAttribute('aria-hidden','true')};
+let nt='real';
+$('#acc').onclick=openA;$('#aclose').onclick=closeA;
+document.querySelectorAll('#asheet .seg button').forEach(b=>b.onclick=()=>{nt=b.dataset.t;document.querySelectorAll('#asheet .seg button').forEach(x=>x.classList.toggle('on',x===b))});
+$('#alist').onclick=e=>{const x=e.target.closest('[data-rm]');if(x){delAcc(x.dataset.rm);return}const c=e.target.closest('[data-a]');if(!c)return;ca=c.dataset.a;SV('pj_cur',ca);sel=iso(new Date());closeA();load()};
+$('#aadd').onclick=()=>{const n=$('#an').value.trim();if(!n){alert('ตั้งชื่อบัญชีก่อน');return}const a={id:'a'+Date.now(),name:n,type:nt};accs.push(a);SV('pj_acc',accs);$('#an').value='';ca=a.id;SV('pj_cur',ca);closeA();load()};
+if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js'));
+</script></body></html>
